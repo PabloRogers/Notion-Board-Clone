@@ -2,11 +2,9 @@
 import React, { useEffect, useRef } from "react";
 import ColumnHeader from "./ColumnHeader";
 import Task from "../Task/Task";
-import { TaskContext, useColumnContext, useTaskContext } from "../context";
+import { TaskContext, useColumnContext } from "../context";
 import DropIndicator from "../Task/DropIndicator";
-import { Task as TaskType } from "@prisma/client";
-import { get } from "http";
-import { useMutation } from "@tanstack/react-query";
+
 // import { updateTaskPosition } from "@/actions";
 
 export default function Column() {
