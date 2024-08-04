@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import ColumnHeader from "./ColumnHeader";
 import Task from "../Task/Task";
 import { TaskContext, useColumnContext, useTaskContext } from "../context";
@@ -12,26 +12,20 @@ import { useMutation } from "@tanstack/react-query";
 export default function Column() {
   const columnData = useColumnContext();
 
-  // const updateTaskMutation = useMutation({
-  //   mutationFn: ({
-  //     taskId,
-  //     columnId,
-  //     position,
-  //   }: {
-  //     taskId: string;
-  //     columnId: string;
-  //     position: string;
-  //   }) => updateTaskPosition(taskId, columnId, position),
-  // });
+  const indicatorsRef = useRef<HTMLElement[]>([]);
+
+  useEffect(() => {
+    indicatorsRef.current = Array.from(
+      document.querySelectorAll(`[data-column="${columnData.id}"]`),
+      (element) => element as HTMLElement
+    );
+  }, [columnData.id]);
 
   const handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    clearIndiactors();
     const taskId = e.dataTransfer.getData("taskId");
     const indicators = getIndicators();
-    const element = getNearestIndicator(e, indicators);
-    if (!element) return;
-
-    const position = (element as HTMLElement).dataset.position;
-    if (!position) return;
+    const { position } = getNearestIndicator(e, indicators);
 
     console.log(taskId, position, columnData.id);
 
@@ -53,18 +47,15 @@ export default function Column() {
   const highlightDropZone = (e: React.DragEvent<HTMLDivElement>) => {
     const dropIndicators = getIndicators();
     clearIndiactors(dropIndicators);
-    const el = getNearestIndicator(e, dropIndicators);
+    const { nearest } = getNearestIndicator(e, dropIndicators);
 
-    if (el) {
-      (el as HTMLElement).style.opacity = "1";
+    if (nearest) {
+      nearest.style.opacity = "1";
     }
   };
 
   const getIndicators = () => {
-    return Array.from(
-      document.querySelectorAll(`[data-column="${columnData.id}"]`),
-      (element) => element as HTMLElement
-    );
+    return indicatorsRef.current;
   };
 
   const clearIndiactors = (els?: HTMLElement[]) => {
@@ -77,21 +68,26 @@ export default function Column() {
   const getNearestIndicator = (
     e: React.DragEvent<HTMLDivElement>,
     indicators: HTMLElement[]
-  ) => {
+  ): { nearest: HTMLElement | null; position: number } => {
     let nearest: HTMLElement | null = null;
     let smallestDistance = Infinity;
+    let position = 0;
 
-    indicators.forEach((indicator) => {
-      const box = indicator.getBoundingClientRect();
-      const distance = Math.abs(e.clientY - box.top);
+    const pointerPosition = e.clientY;
+
+    indicators.forEach((indicator, index) => {
+      const rect = indicator.getBoundingClientRect();
+      const indicatorCenter = rect.top + rect.height / 2;
+      const distance = Math.abs(pointerPosition - indicatorCenter);
 
       if (distance < smallestDistance) {
         smallestDistance = distance;
         nearest = indicator;
+        position = index + 1;
       }
     });
 
-    return nearest;
+    return { nearest, position };
   };
 
   return (
