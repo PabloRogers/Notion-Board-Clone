@@ -105,7 +105,7 @@ export default function Column() {
           </TaskContext.Provider>
         );
       })}
-      <DropIndicator data-column={columnData.id} data-position="-1" />
+      <DropIndicator data-column={columnData.id} />
     </div>
   );
 }

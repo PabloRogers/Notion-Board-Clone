@@ -38,7 +38,7 @@ export default function Task() {
 
   return (
     <>
-      <DropIndicator data-column={column.id} data-position={task.position} />
+      <DropIndicator data-column={column.id} />
       <Sheet>
         <SheetTrigger asChild>
           <Card
