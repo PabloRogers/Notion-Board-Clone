@@ -14,7 +14,7 @@ export default function Column() {
 
   useEffect(() => {
     indicatorsRef.current = Array.from(
-      document.querySelectorAll(`[data-column="${columnData.id}"]`),
+      document.querySelectorAll(`[data-column"]`),
       (element) => element as HTMLElement
     );
   }, [columnData.id]);
@@ -105,7 +105,7 @@ export default function Column() {
           </TaskContext.Provider>
         );
       })}
-      <DropIndicator data-column={columnData.id} />
+      <DropIndicator data-column />
     </div>
   );
 }
