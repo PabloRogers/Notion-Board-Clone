@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import EmojiPicker from "./EmojiPicker/EmojiPicker";
-import { useTaskContext } from "../context";
+import { useTaskContext } from "./context";
 
 type TaskEmojiProps = {
   setStopPropagation: React.Dispatch<React.SetStateAction<boolean>>;

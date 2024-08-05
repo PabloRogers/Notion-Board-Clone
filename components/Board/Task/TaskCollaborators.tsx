@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plus } from "react-feather";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getCollaborators } from "@/actions";
-import { useTaskContext } from "../context";
+import { useTaskContext } from "./context";
 
 export default function TaskCollaborators() {
   const task = useTaskContext();

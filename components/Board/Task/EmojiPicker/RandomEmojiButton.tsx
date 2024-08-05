@@ -3,7 +3,7 @@ import { Button } from "../../../ui/button";
 import { Repeat } from "react-feather";
 import { useMutation } from "@tanstack/react-query";
 import { setTaskEmoji } from "@/actions";
-import { useTaskContext } from "../../context";
+import { useTaskContext } from "../context";
 
 type Emoji = {
   no: number;

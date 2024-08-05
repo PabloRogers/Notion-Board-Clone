@@ -7,8 +7,8 @@ import { Repeat } from "react-feather";
 import { Input } from "../../../ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { setTaskEmoji } from "@/actions";
-import { useTaskContext } from "../../context";
 import RandomEmojiButton from "./RandomEmojiButton";
+import { useTaskContext } from "../context";
 
 type EmojiData = {
   [category: string]: Emoji[];
