@@ -4,31 +4,46 @@ import ColumnHeader from "./ColumnHeader";
 import Task from "../Task/Task";
 import { TaskContext, useColumnContext } from "../context";
 import DropIndicator from "../Task/DropIndicator";
+import { useMutation } from "@tanstack/react-query";
+import { moveTaskToColumn } from "@/actions";
 
 // import { updateTaskPosition } from "@/actions";
 
 export default function Column() {
   const columnData = useColumnContext();
 
-  const indicatorsRef = useRef<HTMLElement[]>([]);
+  const indicatorRefs = useRef<HTMLElement[]>([]);
+  const nearestIndicatorRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
-    indicatorsRef.current = Array.from(
-      document.querySelectorAll(`[data-column"]`),
-      (element) => element as HTMLElement
-    );
-  }, [columnData.id]);
+  const mutation = useMutation({
+    mutationFn: (variables: {
+      taskId: string;
+      columnId: string;
+      position: number;
+    }) =>
+      moveTaskToColumn(
+        variables.taskId,
+        variables.columnId,
+        variables.position
+      ),
+  });
 
   const handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
     clearIndiactors();
     const taskId = e.dataTransfer.getData("taskId");
-    const indicators = getIndicators();
-    const { position } = getNearestIndicator(e, indicators);
+
+    const { position } = getNearestIndicator(e, indicatorRefs.current);
+
+    if (!indicatorRefs && !position) return;
 
     console.log(taskId, position, columnData.id);
-
-    // updateTaskMutation.mutate({ taskId, columnId: columnData.id, position });
+    mutation.mutate({
+      taskId,
+      columnId: columnData.id,
+      position,
+    });
   };
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     highlightDropZone(e);
@@ -43,21 +58,16 @@ export default function Column() {
   };
 
   const highlightDropZone = (e: React.DragEvent<HTMLDivElement>) => {
-    const dropIndicators = getIndicators();
-    clearIndiactors(dropIndicators);
-    const { nearest } = getNearestIndicator(e, dropIndicators);
+    clearIndiactors(indicatorRefs.current);
+    getNearestIndicator(e, indicatorRefs.current);
 
-    if (nearest) {
-      nearest.style.opacity = "1";
+    if (nearestIndicatorRef.current) {
+      nearestIndicatorRef.current.style.opacity = "1";
     }
   };
 
-  const getIndicators = () => {
-    return indicatorsRef.current;
-  };
-
   const clearIndiactors = (els?: HTMLElement[]) => {
-    const indicator = els || getIndicators();
+    const indicator = els || indicatorRefs.current;
     indicator.forEach((el) => {
       el.style.opacity = "0";
     });
@@ -66,8 +76,7 @@ export default function Column() {
   const getNearestIndicator = (
     e: React.DragEvent<HTMLDivElement>,
     indicators: HTMLElement[]
-  ): { nearest: HTMLElement | null; position: number } => {
-    let nearest: HTMLElement | null = null;
+  ): { position: number } => {
     let smallestDistance = Infinity;
     let position = 0;
 
@@ -80,12 +89,23 @@ export default function Column() {
 
       if (distance < smallestDistance) {
         smallestDistance = distance;
-        nearest = indicator;
+        nearestIndicatorRef.current = indicator;
         position = index + 1;
       }
     });
 
-    return { nearest, position };
+    return { position };
+  };
+
+  const addRef = (el: HTMLDivElement | null) => {
+    if (el && !indicatorRefs.current.includes(el)) {
+      indicatorRefs.current.push(el);
+    }
+    return () => {
+      // This function will be called when the component unmounts
+      // Remove the element from indicatorRefs.current
+      indicatorRefs.current = indicatorRefs.current.filter((ref) => ref !== el);
+    };
   };
 
   return (
@@ -101,11 +121,12 @@ export default function Column() {
       {columnData?.tasks.map((task) => {
         return (
           <TaskContext.Provider key={task.id} value={task}>
+            <DropIndicator ref={addRef} />
             <Task />
           </TaskContext.Provider>
         );
       })}
-      <DropIndicator data-column />
+      <DropIndicator ref={addRef} />
     </div>
   );
 }

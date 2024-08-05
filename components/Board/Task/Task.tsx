@@ -38,7 +38,6 @@ export default function Task() {
 
   return (
     <>
-      <DropIndicator data-indicator />
       <Sheet>
         <SheetTrigger asChild>
           <Card

@@ -83,3 +83,62 @@ export const setTaskEmoji = async (emojiCode: string, taskId: string) => {
     },
   });
 };
+
+export async function moveTaskToColumn(
+  taskId: string,
+  targetColumnId: string,
+  targetPosition: number
+) {
+  // Start a transaction
+  await prisma.$transaction(async (prisma) => {
+    // Get the task to be moved
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
+    });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    const { columnId: originalColumnId, position: originalPosition } = task;
+
+    // Reorder tasks in the original column
+    await prisma.task.updateMany({
+      where: {
+        columnId: originalColumnId,
+        position: {
+          gt: originalPosition,
+        },
+      },
+      data: {
+        position: {
+          decrement: 1,
+        },
+      },
+    });
+
+    // Reorder tasks in the target column
+    await prisma.task.updateMany({
+      where: {
+        columnId: targetColumnId,
+        position: {
+          gte: targetPosition,
+        },
+      },
+      data: {
+        position: {
+          increment: 1,
+        },
+      },
+    });
+
+    // Move the task to the target column and update its position
+    await prisma.task.update({
+      where: { id: taskId },
+      data: {
+        columnId: targetColumnId,
+        position: targetPosition,
+      },
+    });
+  });
+}
