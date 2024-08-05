@@ -1,7 +1,7 @@
 import React from "react";
 import { Card } from "../../ui/card";
 import TaskCollaborators from "./TaskCollaborators";
-import { useColumnContext, useTaskContext } from "../context";
+import { useTaskContext } from "../context";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import EmojiPicker from "@emoji-mart/react";
@@ -20,6 +20,7 @@ import TaskSheetForm from "./TaskSheetForm";
 import { ChevronsRight, MoreHorizontal } from "react-feather";
 import { Button } from "@/components/ui/button";
 import DropIndicator from "./DropIndicator";
+import { useColumnContext } from "../Column/context";
 
 export default function Task() {
   const task = useTaskContext();

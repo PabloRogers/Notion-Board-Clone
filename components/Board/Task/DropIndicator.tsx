@@ -1,5 +1,4 @@
 import React, { forwardRef } from "react";
-import { useColumnContext } from "../context";
 
 interface DropIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {}
 

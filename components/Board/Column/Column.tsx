@@ -2,10 +2,11 @@
 import React, { useEffect, useRef } from "react";
 import ColumnHeader from "./ColumnHeader";
 import Task from "../Task/Task";
-import { TaskContext, useColumnContext } from "../context";
+import { TaskContext } from "../context";
 import DropIndicator from "../Task/DropIndicator";
 import { useMutation } from "@tanstack/react-query";
 import { moveTaskToColumn } from "@/actions";
+import { useColumnContext } from "./context";
 
 // import { updateTaskPosition } from "@/actions";
 

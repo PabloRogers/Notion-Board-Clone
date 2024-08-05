@@ -1,7 +1,7 @@
 import React from "react";
 import ColumnTitle from "./ColumnTitle";
 import { Column } from "@prisma/client";
-import { useColumnContext } from "../context";
+import { useColumnContext } from "./context";
 
 export default function ColumnHeader() {
   const columnData = useColumnContext();

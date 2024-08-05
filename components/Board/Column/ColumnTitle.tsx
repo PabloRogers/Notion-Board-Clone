@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Column, ColumnTitleColor } from "@prisma/client";
 import { setColumnTitleColor } from "@/actions";
-import { useColumnContext } from "../context";
 import { useMutation } from "@tanstack/react-query";
+import { useColumnContext } from "./context";
 
 // Add tailwind classes to the stylesheet so dynamic classes can be used
 enum Colors {

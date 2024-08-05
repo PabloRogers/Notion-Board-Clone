@@ -1,11 +1,18 @@
 import { Board, Prisma } from "@prisma/client";
-import { createContext, useContext } from "react";
+import { SetStateAction, createContext, useContext } from "react";
 
-type BoardContextType = Prisma.BoardGetPayload<{
+export type BoardData = Prisma.BoardGetPayload<{
   include: {
     columns: { include: { tasks: { include: { collaborators: true } } } };
   };
 }>;
+
+type BoardContextType = {
+  optimisticBoardData: BoardData;
+  setOptimisticBoardData: React.Dispatch<
+    SetStateAction<BoardData | null | undefined>
+  >;
+};
 
 export const BoardContext = createContext<BoardContextType | null | undefined>(
   undefined

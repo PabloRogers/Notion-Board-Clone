@@ -8,9 +8,9 @@ import {
 } from "@tanstack/react-query";
 import { getBoardData, getColumns } from "@/actions";
 import ColumnList from "./Column/ColumnList";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useOptimistic } from "react";
 import ColumnListFallback from "./Column/ColumnListFallback";
-import { BoardContext } from "./context";
+import { BoardContext, BoardData as BoardDataType } from "./context";
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -27,7 +27,6 @@ export default function Board() {
         {
           event: "*",
           schema: "public",
-          table: "Column",
         },
         (payload: any) => {
           console.log(payload);
@@ -50,14 +49,21 @@ export default function Board() {
     queryFn: () => getBoardData(),
     refetchOnWindowFocus: false,
   });
+  const [optimisticBoardData, setOptimisticBoardData] = useOptimistic<
+    BoardDataType | null | undefined
+  >(boardData);
 
   if (isLoading) {
     return <ColumnListFallback />;
   }
 
+  if (!optimisticBoardData) return;
+
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <BoardContext.Provider value={boardData}>
+      <BoardContext.Provider
+        value={{ optimisticBoardData, setOptimisticBoardData }}
+      >
         <ColumnList />
       </BoardContext.Provider>
     </div>
