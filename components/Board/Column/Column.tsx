@@ -102,8 +102,7 @@ export default function Column() {
       indicatorRefs.current.push(el);
     }
     return () => {
-      // This function will be called when the component unmounts
-      // Remove the element from indicatorRefs.current
+      // Remove the ref when the component is unmounted
       indicatorRefs.current = indicatorRefs.current.filter((ref) => ref !== el);
     };
   };
