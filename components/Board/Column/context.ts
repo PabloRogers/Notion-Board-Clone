@@ -1,15 +1,13 @@
 import { Prisma } from "@prisma/client";
-import { createContext, useContext } from "react";
+import { SetStateAction, createContext, useContext } from "react";
 
-type ColunmContextType = Prisma.ColumnGetPayload<{
+type TColumnData = Prisma.ColumnGetPayload<{
   include: {
     tasks: { include: { collaborators: true } };
   };
 }>;
 
-export const ColumnContext = createContext<ColunmContextType | undefined>(
-  undefined
-);
+export const ColumnContext = createContext<TColumnData | undefined>(undefined);
 
 export function useColumnContext() {
   const columnData = useContext(ColumnContext);

@@ -9,7 +9,7 @@ export default function ColumnList() {
 
   return (
     <div className={`flex gap-4 w-[900px]`}>
-      {boardData?.optimisticBoardData?.columns.map((column) => {
+      {boardData?.columns.map((column) => {
         return (
           <ColumnContext.Provider key={column.id} value={column}>
             <Column />

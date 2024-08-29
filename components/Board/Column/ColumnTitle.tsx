@@ -29,12 +29,18 @@ enum Colors {
 
 export default function ColumnTitle() {
   const columnData = useColumnContext();
-  if (!columnData) return null;
+
+  const [optimitsticColumnData, setOptimisticColumnData] =
+    useOptimistic(columnData);
+
+  const [columnColor, setColumnColor] = useState(columnData.titleColor);
 
   const { mutate } = useMutation({
     mutationFn: (color: ColumnTitleColor) =>
       setColumnTitleColor(color, columnData.id),
   });
+
+  if (!columnData) return null;
 
   return (
     <DropdownMenu>
@@ -42,12 +48,12 @@ export default function ColumnTitle() {
         <button>
           <Badge
             variant="secondary"
-            className={`flex space-x-2 text-sm font-medium text-opacity-60 bg-${columnData.titleColor}-500/40 hover:bg-${columnData.titleColor}-500/60 `}
+            className={`flex space-x-2 text-sm font-medium text-opacity-60 bg-${optimitsticColumnData.titleColor}-500/40 hover:bg-${optimitsticColumnData.titleColor}-500/60 `}
           >
             <div
-              className={`rounded-full w-2 h-2 bg-${columnData.titleColor}-500`}
+              className={`rounded-full w-2 h-2 bg-${optimitsticColumnData.titleColor}-500`}
             ></div>
-            <div>{columnData.title}</div>
+            <div>{optimitsticColumnData.title}</div>
           </Badge>
         </button>
       </DropdownMenuTrigger>
@@ -55,8 +61,12 @@ export default function ColumnTitle() {
         <DropdownMenuLabel>Column Color</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
-          value={columnData.titleColor}
+          value={optimitsticColumnData.titleColor}
           onValueChange={(value) => {
+            setOptimisticColumnData((prev) => ({
+              ...prev,
+              titleColor: value as ColumnTitleColor,
+            }));
             mutate(value as ColumnTitleColor);
           }}
           className="font-semibold"
