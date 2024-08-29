@@ -9,8 +9,6 @@ import { moveTaskToColumn } from "@/actions";
 import { useColumnContext } from "./context";
 import { TaskContext } from "../Task/context";
 
-// import { updateTaskPosition } from "@/actions";
-
 export default function Column() {
   const columnData = useColumnContext();
 
